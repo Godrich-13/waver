@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WhatsApp Bot Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>WhatsApp Bot Management</h1>
+    <form id="connectForm">
+        <input type="text" id="accountId" placeholder="Account ID" required />
+        <button type="submit">Connect Account</button>
+    </form>
+    <div id="qrCodeContainer"></div>
+
+    <h2>Update Keywords and Responses</h2>
+    <form id="updateForm">
+        <input type="text" id="keyword" placeholder="Keyword" required />
+        <input type="text" id="textResponse" placeholder="Text Response" required />
+        <input type="text" id="mediaPath" placeholder="Media Path (optional)" />
+        <button type="submit">Update</button>
+    </form>
+
+    <script>
+        document.getElementById('connectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const accountId = document.getElementById('accountId').value;
+            const response = await fetch(`/api/connect/${accountId}`);
+            document.getElementById('qrCodeContainer').innerHTML = await response.text();
+        });
+
+        document.getElementById('updateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const keyword = document.getElementById('keyword').value;
+            const textResponse = document.getElementById('textResponse').value;
+            const mediaPath = document.getElementById('mediaPath').value;
+
+            await fetch('/api/keywords', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ keyword, text: textResponse, media: mediaPath })
+            });
+            alert(`Keyword "${keyword}" updated successfully!`);
+        });
+    </script>
+</body>
+</html>
